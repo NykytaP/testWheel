@@ -1,4 +1,6 @@
 ﻿using Core.Loaders.MainUI;
+using Core.Loaders.Popups.StartGame;
+using Core.ViewPresenters.Popups.StartGamePopup;
 using Infrastructure.Factories;
 using Infrastructure.Helpers.CancellationTokenHelper;
 using Infrastructure.Helpers.GameObjectHelper;
@@ -26,6 +28,7 @@ namespace Infrastructure.Installers
         private void BindLoaders()
         {
             Container.Bind<IMainUILoader>().To<MainUILoader>().AsCached();
+            Container.Bind<IStartGamePopupViewLoader>().To<StartGamePopupViewLoader>().AsCached();
         }
 
         private void BindServices()
@@ -35,6 +38,7 @@ namespace Infrastructure.Installers
         
         private void BindPresenters()
         {
+            Container.Bind<IStartGamePopupViewPresenter>().To<StartGamePopupViewPresenter>().AsTransient();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Data;
-using Infrastructure.Data.SceneDto;
 using Infrastructure.Factories;
 using Infrastructure.Helpers.CancellationTokenHelper;
 using Infrastructure.SceneManagement;
@@ -10,7 +9,7 @@ using Zenject;
 
 namespace Infrastructure.StateMachine.States
 {
-    public class LoadWheelState : IPayloadedState<GameSceneDto>
+    public class LoadWheelState : IState
     {
         private readonly GameStateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
@@ -24,7 +23,7 @@ namespace Infrastructure.StateMachine.States
             _sceneLoader = sceneLoader;
         }
 
-        public async Task Enter(GameSceneDto payload)
+        public async Task Enter()
         {
             await _sceneLoader.Load(SceneName.WheelScene, OnLoaded);
         }

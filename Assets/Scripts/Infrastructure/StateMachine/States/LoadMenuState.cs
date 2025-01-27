@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Core.ViewPresenters.Popups.StartGamePopup;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Data;
 using Infrastructure.Factories;
@@ -45,6 +46,9 @@ namespace Infrastructure.StateMachine.States
 
         private async UniTask ShowStartGamePopup()
         {
+            IStartGamePopupViewPresenter presenter = _container.Resolve<IStartGamePopupViewPresenter>();
+
+            await presenter.ShowPopup(_cancellationTokenHelper.GetSceneCancellationToken());
         }
 
         private async Task InitUIRoot()
