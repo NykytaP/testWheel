@@ -1,4 +1,7 @@
 ﻿using Core.Loaders.MainUI;
+using Core.Loaders.Popups.Wheel;
+using Core.ViewPresenters.Popups.StartGamePopup;
+using Core.ViewPresenters.Popups.WheelPopup;
 using Infrastructure.Factories;
 using Infrastructure.Helpers.CancellationTokenHelper;
 using Infrastructure.Helpers.GameObjectHelper;
@@ -31,10 +34,12 @@ namespace Infrastructure.Installers
         private void BindLoaders()
         {
             Container.Bind<IMainUILoader>().To<MainUILoader>().AsCached();
+            Container.Bind<IWheelPopupViewLoader>().To<WheelPopupViewLoader>().AsCached();
         }
 
         private void BindPresenters()
         {
+            Container.Bind<IWheelPopupViewPresenter>().To<WheelPopupViewPresenter>().AsTransient();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Core.ViewPresenters.Popups.WheelPopup;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Data;
 using Infrastructure.Factories;
@@ -45,6 +46,9 @@ namespace Infrastructure.StateMachine.States
 
         private async UniTask SpawnWheel()
         {
+            IWheelPopupViewPresenter presenter = _container.Resolve<IWheelPopupViewPresenter>();
+
+            await presenter.ShowPopup(_cancellationTokenHelper.GetSceneCancellationToken());
         }
 
         private async UniTask InitUIRoot()
