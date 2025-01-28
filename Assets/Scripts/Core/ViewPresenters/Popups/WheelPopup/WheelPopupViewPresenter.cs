@@ -1,13 +1,18 @@
 using System.Threading;
+using Core.Data;
+using Core.Data.Entities;
 using Core.Data.ViewData;
 using Core.Loaders.Popups.Wheel;
+using Core.Services.BalanceService;
+using Core.Services.PrizeGenerator;
 using Core.Views.Popups.Wheel;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Factories;
 using Infrastructure.Helpers.GameObjectHelper;
 using Infrastructure.Helpers.ViewPresenter;
-using Infrastructure.StateMachine;
+using Infrastructure.Signals;
 using UnityEngine;
+using Zenject;
 
 namespace Core.ViewPresenters.Popups.WheelPopup
 {
@@ -16,14 +21,22 @@ namespace Core.ViewPresenters.Popups.WheelPopup
         private readonly IWheelPopupViewLoader _loader;
         private readonly IUIFactory _uiFactory;
         private readonly IGameObjectHelper _gameObjectHelper;
-        private readonly GameStateMachine _gameStateMachine;
+        private readonly IPrizeGenerator _prizeGenerator;
+        private readonly IBalanceService _balanceService;
+        private readonly SignalBus _signalBus;
 
-        public WheelPopupViewPresenter(IWheelPopupViewLoader loader, IUIFactory uiFactory, IGameObjectHelper gameObjectHelper, GameStateMachine gameStateMachine)   
+        private PrizeEntity[] _cachedPrizes;
+        private WheelPopupView _mainView;
+        
+        public WheelPopupViewPresenter(IWheelPopupViewLoader loader, IUIFactory uiFactory, IGameObjectHelper gameObjectHelper, 
+            IPrizeGenerator prizeGenerator, IBalanceService balanceService, SignalBus signalBus)   
         {
             _loader = loader;
             _uiFactory = uiFactory;
             _gameObjectHelper = gameObjectHelper;
-            _gameStateMachine = gameStateMachine;
+            _prizeGenerator = prizeGenerator;
+            _balanceService = balanceService;
+            _signalBus = signalBus;
         }
         
         public async UniTask ShowPopup(CancellationToken cancellationToken)
@@ -41,20 +54,38 @@ namespace Core.ViewPresenters.Popups.WheelPopup
             if (_cachedCancellationToken.IsCancellationRequested)
                 return;
 
-            WheelPopupView mainView = _gameObjectHelper.InstantiateObjectWithComponentInScene<WheelPopupView>(popupPrefab.gameObject, uiRoot);
+            _mainView = _gameObjectHelper.InstantiateObjectWithComponentInScene<WheelPopupView>(popupPrefab.gameObject, uiRoot);
 
-            mainView.OnClose += () => viewTokenSource.Cancel();
-            mainView.SetData(GetViewData());
+            _mainView.OnClose += () => viewTokenSource.Cancel();
+            _mainView.SetData(GetViewData());
         }
 
         private WheelPopupViewData GetViewData()
         {
-            return new WheelPopupViewData(HandleSpinClicked);
+            _cachedPrizes = _prizeGenerator.GenerateAndCachePrizes(Constants.WheelOfFortuneCore.PrizesAmount);
+            
+            return new WheelPopupViewData(HandleSpinClicked, _cachedPrizes);
         }
 
-        private void HandleSpinClicked()
+        private async void HandleSpinClicked()
         {
-            Debug.LogError("Spin");
+            int prizeIndex = GetRandomPrize();
+            PrizeEntity prizeEntity = _cachedPrizes[prizeIndex];
+
+            _balanceService.AddMoney(prizeEntity.Amount);
+            
+            await _mainView.RotateWheel(prizeIndex);
+            
+            _signalBus.Fire<BalanceUpdatedSignal>();
+            Debug.LogError($"Balance updated: {_balanceService.GetBalance()}");
+        }
+
+        private int GetRandomPrize()
+        {
+            if (_cachedPrizes.Length == 0)
+                return -1;
+
+            return Random.Range(0, _cachedPrizes.Length);
         }
     }
 }

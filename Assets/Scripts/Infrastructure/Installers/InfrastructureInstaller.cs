@@ -1,4 +1,6 @@
-﻿using Infrastructure.AssetsManagement;
+﻿using Core.Services.DataManager;
+using Core.Services.SaveLoadService;
+using Infrastructure.AssetsManagement;
 using Infrastructure.Factories.StateFactory;
 using Infrastructure.SceneManagement;
 using Infrastructure.SessionStorage;
@@ -11,6 +13,7 @@ namespace Infrastructure.Installers
         public override void InstallBindings()
         {
             Container.Bind(typeof(ISessionStorage<>)).To(typeof(SessionStorage<>)).AsCached();
+            SignalsInstaller.Install(Container);
             
             BindFactories();
             BindLoaders();
@@ -31,10 +34,12 @@ namespace Infrastructure.Installers
         {
             Container.BindInterfacesAndSelfTo<AssetProvider>().AsSingle();
             Container.Bind<SceneLoader>().AsSingle();
+            Container.Bind<ISaveLoadService>().To<SaveLoadService>().AsSingle();
         }
 
         private void BindManagers()
         {
+            Container.Bind<IDataManager>().To<DataManager>().AsCached();
         }
     }
 }

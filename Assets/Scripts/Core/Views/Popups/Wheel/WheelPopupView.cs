@@ -1,5 +1,6 @@
 ﻿using Core.Data.ViewData;
 using Core.PopupSystem.Views;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Core.Views.Popups.Wheel
@@ -16,8 +17,15 @@ namespace Core.Views.Popups.Wheel
             if (data is WheelPopupViewData viewData)
             {
                 _cachedViewData = viewData;
+                
                 _wheelView.SpinButton.onClick.AddListener(() => _cachedViewData.OnSpinClicked?.Invoke());
+                _wheelView.SetPrizes(viewData.PrizeEntities);
             }
+        }
+
+        public async UniTask RotateWheel(int prizeIndex)
+        {
+            await _wheelView.Rotate(prizeIndex);
         }
     }
 }

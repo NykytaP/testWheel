@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Core.Services.DataManager;
 using Core.ViewPresenters.Popups.WheelPopup;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Data;
@@ -37,11 +38,19 @@ namespace Infrastructure.StateMachine.States
         {
             _container = Object.FindObjectOfType<SceneContext>().Container;
             _cancellationTokenHelper = _container.Resolve<ICancellationTokenHelper>();
-            
+
+            LoadData();
             await InitUIRoot();
             await SpawnWheel();
 
             await StartGameLoop();
+        }
+
+        private void LoadData()
+        {
+            IDataManager dataManager = _container.Resolve<IDataManager>();
+            
+            dataManager.LoadBalanceData();
         }
 
         private async UniTask SpawnWheel()
