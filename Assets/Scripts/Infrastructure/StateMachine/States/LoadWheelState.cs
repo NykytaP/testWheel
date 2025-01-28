@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Core.Services.DataManager;
+using Core.ViewPresenters.Popups.BalancePanelViewPresenter;
 using Core.ViewPresenters.Popups.WheelPopup;
 using Cysharp.Threading.Tasks;
 using Infrastructure.Data;
@@ -42,6 +43,7 @@ namespace Infrastructure.StateMachine.States
             LoadData();
             await InitUIRoot();
             await SpawnWheel();
+            await InitUI();
 
             await StartGameLoop();
         }
@@ -53,18 +55,25 @@ namespace Infrastructure.StateMachine.States
             dataManager.LoadBalanceData();
         }
 
+        private async UniTask InitUIRoot()
+        {
+            IUIFactory uiFactory = _container.Resolve<IUIFactory>();
+            
+            await uiFactory.InitUIRoot();
+        }
+        
         private async UniTask SpawnWheel()
         {
             IWheelPopupViewPresenter presenter = _container.Resolve<IWheelPopupViewPresenter>();
 
             await presenter.ShowPopup(_cancellationTokenHelper.GetSceneCancellationToken());
         }
-
-        private async UniTask InitUIRoot()
+        
+        private async UniTask InitUI()
         {
-            IUIFactory uiFactory = _container.Resolve<IUIFactory>();
-            
-            await uiFactory.InitUIRoot();
+            IBalancePanelViewPresenter balancePanelViewPresenter = _container.Resolve<IBalancePanelViewPresenter>();
+
+            await balancePanelViewPresenter.ShowPanel(_cancellationTokenHelper.GetSceneCancellationToken());
         }
 
         private async Task StartGameLoop()

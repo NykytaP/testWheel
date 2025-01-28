@@ -1,4 +1,5 @@
 ﻿using Core.Data.Entities;
+using Core.Utils;
 using TMPro;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace Core.Views.Popups.Wheel
         
         public void SetData(PrizeEntity prizeEntity)
         {
-            _prizeAmount.text = prizeEntity.Amount.ToString();
+            _prizeAmount.text = BalanceParser.GetParsedBalance(prizeEntity.Amount);
         }
     }
 }

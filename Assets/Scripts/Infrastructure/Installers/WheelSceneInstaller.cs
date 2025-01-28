@@ -1,8 +1,9 @@
 ﻿using Core.Loaders.MainUI;
+using Core.Loaders.Popups.BalancePanel;
 using Core.Loaders.Popups.Wheel;
 using Core.Services.BalanceService;
-using Core.Services.PrizeGenerator;
-using Core.Services.SaveLoadService;
+using Core.Services.WheelPrizeManager;
+using Core.ViewPresenters.Popups.BalancePanelViewPresenter;
 using Core.ViewPresenters.Popups.WheelPopup;
 using Infrastructure.Factories;
 using Infrastructure.Helpers.CancellationTokenHelper;
@@ -31,7 +32,7 @@ namespace Infrastructure.Installers
         private void BindServices()
         {
             Container.Bind<IGameObjectHelper>().To<GameObjectHelper>().AsSingle();
-            Container.Bind<IPrizeGenerator>().To<PrizeGenerator>().AsSingle();
+            Container.Bind<IWheelPrizeManager>().To<WheelPrizeManager>().AsSingle();
             Container.Bind<IBalanceService>().To<BalanceService>().AsSingle();
         }
 
@@ -39,11 +40,13 @@ namespace Infrastructure.Installers
         {
             Container.Bind<IMainUILoader>().To<MainUILoader>().AsCached();
             Container.Bind<IWheelPopupViewLoader>().To<WheelPopupViewLoader>().AsCached();
+            Container.Bind<IBalancePanelViewLoader>().To<BalancePanelViewLoader>().AsCached();
         }
 
         private void BindPresenters()
         {
             Container.Bind<IWheelPopupViewPresenter>().To<WheelPopupViewPresenter>().AsTransient();
+            Container.Bind<IBalancePanelViewPresenter>().To<BalancePanelViewPresenter>().AsTransient();
         }
     }
 }

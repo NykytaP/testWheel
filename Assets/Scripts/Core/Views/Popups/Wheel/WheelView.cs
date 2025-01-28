@@ -48,6 +48,8 @@ namespace Core.Views.Popups.Wheel
             if (_cachedPrizes.Length == 0 || prizeIndex >= _cachedPrizes.Length)
                 return;
             
+            _spinButton.interactable = false;
+            
             float prizeAngle = prizeIndex * _segmentAngle;
             float currentAngle = _wheelTransform.localEulerAngles.z;
             float angleDifference = Mathf.DeltaAngle(currentAngle, prizeAngle);
@@ -57,6 +59,8 @@ namespace Core.Views.Popups.Wheel
                 .DORotate(new Vector3(0, 0, currentAngle + totalAngle), RotateDuration, RotateMode.FastBeyond360)
                 .SetEase(Ease.InOutQuart)
                 .AsyncWaitForCompletion();
+
+            _spinButton.interactable = true;
         }
         
         private void SpawnPrizes(PrizeEntity[] prizeEntities)

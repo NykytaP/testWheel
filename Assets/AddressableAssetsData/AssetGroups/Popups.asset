@@ -27,6 +27,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6cf7e87a5cdc6c146aac7a337d62fe2d
+    m_Address: Popups/BalancePanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 88d3beffaf23a9d4cbf9cb4a5db094c4, type: 2}
   m_SchemaSet:
